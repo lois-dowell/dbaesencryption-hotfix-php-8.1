@@ -1,5 +1,5 @@
 {
-    "name": "codiant/dbaesencrypt",
+    "name": "codiantnew/dbaesencrypt",
     "type": "library",
     "description": "Laravel MySql AES Encrypt/Decrypt",
     "keywords": ["laravel","mysql", "aes", "encrypt", "database encrypt laravel"],
