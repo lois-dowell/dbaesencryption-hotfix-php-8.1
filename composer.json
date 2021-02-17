@@ -1,0 +1,38 @@
+{
+    "name": "codiant/dbaesencrypt",
+    "type": "library",
+    "description": "Laravel MySql AES Encrypt/Decrypt",
+    "keywords": ["laravel","mysql", "aes", "encrypt", "database encrypt laravel"],
+    "homepage": "https://github.com/mahendrgurjar",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Mahendra Gurjar",
+            "email": "mahendra.gurjar@codiant.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/config": ">=5.4",
+        "illuminate/database": ">=5.4",
+        "illuminate/support": ">=5.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Codiant\\DBAESEncrypt\\": "src"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "extra": {
+        "branch-alias": {
+            "main": "1.0.0"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
