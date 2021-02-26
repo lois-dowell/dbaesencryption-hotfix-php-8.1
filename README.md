@@ -7,7 +7,7 @@
 
 
 # Laravel MySql AES Encrypt/Decrypt
-Laravel 5.x Database Encryption in mysql side, use native mysql function AES_DECRYPT and AES_ENCRYPT<br>
+Laravel 7.x Database Encryption in mysql side, use native mysql function AES_DECRYPT and AES_ENCRYPT<br>
 Auto encrypt and decrypt signed fields/columns in your Model<br>
 Can use all functions of Eloquent/Model<br>
 You can perform the operations "=>, <',' between ',' LIKE ' in encrypted columns<br>
@@ -16,7 +16,7 @@ You can perform the operations "=>, <',' between ',' LIKE ' in encrypted columns
 ## 1.Install the package via Composer:
 
 ```php
-$ composer require codiant/dbaesencrypt
+$ composer require codiantnew/dbaesencrypt
 ```
 ## 2.Configure provider
 If you're on Laravel 5.4 or earlier, you'll need to add and comment line on config/app.php:
@@ -27,7 +27,7 @@ If you're on Laravel 5.4 or earlier, you'll need to add and comment line on conf
     Codiant\\DBAESEncrypt\\Database\\DatabaseServiceProviderEncrypt::class
 )
 ```
-## Updating Your Eloquent Models
+## 3.Updating Your Eloquent Models
 
 Your models that have encrypted columns, should extend from ModelEncrypt:
 
@@ -66,7 +66,7 @@ class Product extends ModelEncrypt
 }
 ```
 
-## Creating tables to support encrypt columns
+## 4.Creating tables to support encrypt columns
 It adds new features to Schema which you can use in your migrations:
 
 ```php
@@ -85,7 +85,7 @@ It adds new features to Schema which you can use in your migrations:
 
 });
 
-## Set encryption key in .env and config file
+## 5.Set encryption key in .env and config file
 
 ```php
 Set in .env file
@@ -97,7 +97,7 @@ Set in config/services.php
 ]
 ```
 
-## Add BaseUser class for fixed problem of authenticable model problem
+## 6.Add BaseUser class for fixed problem of authenticable model problem
 Create BaseUser class in app/BaseUser.php for fixed problem of authenticable model problem
 Extends BaseUser class in your Authenticatable model.
 
@@ -128,8 +128,13 @@ class BaseUser extends Eloquent\ModelEncrypt implements
 ## Important Notes
 
 ```
-1. DB query will not work.
-2. Union will not work with paginate method. with union please use simplePaginate method.
-3. On encrypted column searching will work case sensitive. For resolve this problem use mysql lowercase method.
-4. Don't use encrypted column for making model relation.
+1. DB query will not work with encrypted column.
+2. Union will not work with paginate method. with union you can use simplePaginate method.
+3. On encrypted column searching will work case sensitive. To resolve this problem use the MySQL lowercase method.
+4. Don't use encrypted columns for making model relations.
+5. Use all columns of the encrypted table in fillable array. You can select only columns that are available in fillable array in your select query.
+6. Don't use asterisk in select method with encrypted table (ex. ->select('users.*')).
+    Sometimes you want to use an asterisk with join and some other condition. For that condition, you have to overwrite encrypted columns.
+    Example : I have encrypt name column in users table.
+            ->select(DB::raw('users.*'),'name as name')
 ```
