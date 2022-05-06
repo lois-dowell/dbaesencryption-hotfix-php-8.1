@@ -87,7 +87,7 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
      * @param  \Illuminate\Database\Query\Builder  $query
      * @return string
      */
-    protected function compileWheres(Builder $query)
+    public function compileWheres(Builder $query)
     {
         // Each type of where clauses has its own compiler function which is responsible
         // for actually creating the where clauses SQL. This helps keep the code nice
