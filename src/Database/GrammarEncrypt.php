@@ -27,8 +27,10 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
         // To compile the query, we'll spin through each component of the query and
         // see if that component exists. If it does we'll just call the compiler
         // function for the component which is responsible for making the SQL.
-        $sql = trim($this->concatenate(
-            $this->compileComponents($query))
+        $sql = trim(
+            $this->concatenate(
+                $this->compileComponents($query)
+            )
         );
 
         $query->columns = $original;
@@ -50,8 +52,8 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
             // To compile the query, we'll spin through each component of the query and
             // see if that component exists. If it does we'll just call the compiler
             // function for the component which is responsible for making the SQL.
-            if (! is_null($query->$component)) {
-                $method = 'compile'.ucfirst($component);
+            if (!is_null($query->$component)) {
+                $method = 'compile' . ucfirst($component);
 
                 $sql[$component] = $this->$method($query, $query->$component);
             }
@@ -72,13 +74,13 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
         // If the query is actually performing an aggregating select, we will let that
         // compiler handle the building of the select clauses, as it will need some
         // more syntax that is best handled by that function to keep things neat.
-        if (! is_null($query->aggregate)) {
+        if (!is_null($query->aggregate)) {
             return;
         }
 
         $select = $query->distinct ? 'select distinct ' : 'select ';
 
-        return $select.$this->columnize($columns, $this->columnsEncrypt, true);
+        return $select . $this->columnize($columns, $this->columnsEncrypt, true);
     }
 
     /**
@@ -115,7 +117,7 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
     protected function compileWheresToArray($query)
     {
         return collect($query->wheres)->map(function ($where) use ($query) {
-            return $where['boolean'].' '.$this->{"where{$where['type']}"}($query, $where);
+            return $where['boolean'] . ' ' . $this->{"where{$where['type']}"}($query, $where);
         })->all();
     }
 
@@ -130,7 +132,7 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
     {
         $value = $this->parameter($where['value']);
 
-        return $this->wrap($where['column'], false, $this->columnsEncrypt).' '.$where['operator'].' '.$value;
+        return $this->wrap($where['column'], false, $this->columnsEncrypt) . ' ' . $where['operator'] . ' ' . $value;
     }
 
     /**
@@ -142,8 +144,8 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
      */
     protected function whereIn(Builder $query, $where)
     {
-        if (! empty($where['values'])) {
-            return $this->wrap($where['column'], false, $this->columnsEncrypt).' in ('.$this->parameterize($where['values']).')';
+        if (!empty($where['values'])) {
+            return $this->wrap($where['column'], false, $this->columnsEncrypt) . ' in (' . $this->parameterize($where['values']) . ')';
         }
 
         return '0 = 1';
@@ -158,8 +160,8 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
      */
     protected function whereNotIn(Builder $query, $where)
     {
-        if (! empty($where['values'])) {
-            return $this->wrap($where['column'], false, $this->columnsEncrypt).' not in ('.$this->parameterize($where['values']).')';
+        if (!empty($where['values'])) {
+            return $this->wrap($where['column'], false, $this->columnsEncrypt) . ' not in (' . $this->parameterize($where['values']) . ')';
         }
 
         return '1 = 1';
@@ -174,7 +176,7 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
      */
     protected function whereInSub(Builder $query, $where)
     {
-        return $this->wrap($where['column']).' in ('.$this->compileSelect($where['query']).')';
+        return $this->wrap($where['column']) . ' in (' . $this->compileSelect($where['query']) . ')';
     }
 
     /**
@@ -186,7 +188,7 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
      */
     protected function whereNotInSub(Builder $query, $where)
     {
-        return $this->wrap($where['column'], false, $this->columnsEncrypt).' not in ('.$this->compileSelect($where['query']).')';
+        return $this->wrap($where['column'], false, $this->columnsEncrypt) . ' not in (' . $this->compileSelect($where['query']) . ')';
     }
 
     /**
@@ -198,7 +200,7 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
      */
     protected function whereNull(Builder $query, $where)
     {
-        return $this->wrap($where['column'], false, $this->columnsEncrypt).' is null';
+        return $this->wrap($where['column'], false, $this->columnsEncrypt) . ' is null';
     }
 
     /**
@@ -210,7 +212,7 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
      */
     protected function whereNotNull(Builder $query, $where)
     {
-        return $this->wrap($where['column'], false, $this->columnsEncrypt).' is not null';
+        return $this->wrap($where['column'], false, $this->columnsEncrypt) . ' is not null';
     }
 
     /**
@@ -224,7 +226,7 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
     {
         $between = $where['not'] ? 'not between' : 'between';
 
-        return $this->wrap($where['column'], false, $this->columnsEncrypt).' '.$between.' ? and ?';
+        return $this->wrap($where['column'], false, $this->columnsEncrypt) . ' ' . $between . ' ? and ?';
     }
 
     /**
@@ -299,7 +301,7 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
     {
         $value = $this->parameter($where['value']);
 
-        return $type.'('.$this->wrap($where['column'], false, $this->columnsEncrypt).') '.$where['operator'].' '.$value;
+        return $type . '(' . $this->wrap($where['column'], false, $this->columnsEncrypt) . ') ' . $where['operator'] . ' ' . $value;
     }
 
     /**
@@ -311,7 +313,7 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
      */
     protected function whereColumn(Builder $query, $where)
     {
-        return $this->wrap($where['first'], false, $this->columnsEncrypt).' '.$where['operator'].' '.$this->wrap($where['second']);
+        return $this->wrap($where['first'], false, $this->columnsEncrypt) . ' ' . $where['operator'] . ' ' . $this->wrap($where['second']);
     }
 
     /**
@@ -328,7 +330,7 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
         // if it is a normal query we need to take the leading "where" of queries.
         $offset = $query instanceof JoinClause ? 3 : 6;
 
-        return '('.substr($this->compileWheres($where['query']), $offset).')';
+        return '(' . substr($this->compileWheres($where['query']), $offset) . ')';
     }
 
     /**
@@ -342,7 +344,7 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
     {
         $select = $this->compileSelect($where['query']);
 
-        return $this->wrap($where['column'], false, $this->columnsEncrypt).' '.$where['operator']." ($select)";
+        return $this->wrap($where['column'], false, $this->columnsEncrypt) . ' ' . $where['operator'] . " ($select)";
     }
 
     /**
@@ -354,7 +356,7 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
      */
     protected function whereExists(Builder $query, $where)
     {
-        return 'exists ('.$this->compileSelect($where['query']).')';
+        return 'exists (' . $this->compileSelect($where['query']) . ')';
     }
 
     /**
@@ -366,7 +368,7 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
      */
     protected function whereNotExists(Builder $query, $where)
     {
-        return 'not exists ('.$this->compileSelect($where['query']).')';
+        return 'not exists (' . $this->compileSelect($where['query']) . ')';
     }
 
     /**
@@ -378,7 +380,7 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
      */
     protected function compileGroups(Builder $query, $groups)
     {
-        return 'group by '.$this->columnize($groups,  $this->columnsEncrypt);
+        return 'group by ' . $this->columnize($groups,  $this->columnsEncrypt);
     }
 
 
@@ -396,9 +398,9 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
 
         $parameter = $this->parameter($having['value']);
 
-        return $having['boolean'].' '.$column.' '.$having['operator'].' '.$parameter;
+        return $having['boolean'] . ' ' . $column . ' ' . $having['operator'] . ' ' . $parameter;
     }
-    
+
     /**
      * Compile the query orders to an array.
      *
@@ -410,9 +412,9 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
     {
         // TODO: Need check
         return array_map(function ($order) {
-            return ! isset($order['sql'])
-                        ? $this->wrap($order['column'], false, $this->columnsEncrypt).' '.$order['direction']
-                        : $order['sql'];
+            return !isset($order['sql'])
+                ? $this->wrap($order['column'], false, $this->columnsEncrypt) . ' ' . $order['direction']
+                : $order['sql'];
         }, $orders);
     }
 
@@ -440,7 +442,7 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
     public function compileInsert(Builder $query, array $values)
     {
         $this->columnsEncrypt = [];
-        if($query instanceof \Codiant\DBAESEncrypt\Database\Query\BuilderEncrypt) {
+        if ($query instanceof \Codiant\DBAESEncrypt\Database\Query\BuilderEncrypt) {
             $instance = "BuilderEncrypt";
             $this->columnsEncrypt = $query->getfillableEncrypt();
         }
@@ -450,7 +452,7 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
         // basic routine regardless of an amount of records given to us to insert.
         $table = $this->wrapTable($query->from);
 
-        if (! is_array(reset($values))) {
+        if (!is_array(reset($values))) {
             $values = [$values];
         }
 
@@ -460,7 +462,7 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
         // to the query. Each insert should have the exact same amount of parameter
         // bindings so we will loop through the record and parameterize them all.
         $parameters = collect($values)->map(function ($record) {
-            return '('.$this->parameterize($record, $this->columnsEncrypt).')';
+            return '(' . $this->parameterize($record, $this->columnsEncrypt) . ')';
         })->implode(', ');
 
         return "insert into $table ($columns) values $parameters";
@@ -494,11 +496,10 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
         $columnize = [];
 
         foreach ($columns as $key => $value) {
-             $value = $this->wrap($value, false, $columnsEncrypt);
-            if($forceAlias && !empty($columnsEncrypt) && strpos(strtolower($value), ' as ') === false)
-            {
+            $value = $this->wrap($value, false, $columnsEncrypt);
+            if ($forceAlias && !empty($columnsEncrypt) && strpos(strtolower($value), ' as ') === false) {
                 preg_match("/\`.*?\`/", $value, $alias);
-                if(!empty(@$alias[0])){
+                if (!empty(@$alias[0])) {
                     $value = $value . ' as ' . @$alias[0];
                 }
             }
@@ -546,10 +547,11 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
         // as well in order to generate proper syntax. If this is a column of course
         // no prefix is necessary. The condition will be true when from wrapTable.
         if ($prefixAlias) {
-            $segments[1] = $this->tablePrefix.$segments[1];
+            $segments[1] = $this->tablePrefix . $segments[1];
         }
 
-        return $this->wrap($segments[0], false, $columnsEncrypt).' as '.$this->wrapValue($segments[1]
+        return $this->wrap($segments[0], false, $columnsEncrypt) . ' as ' . $this->wrapValue(
+            $segments[1]
         );
     }
 
@@ -563,8 +565,8 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
     {
         return collect($segments)->map(function ($segment, $key) use ($segments, $columnsEncrypt) {
             return $key == 0 && count($segments) > 1
-                            ? $this->wrapTable($segment)
-                            : $this->wrapValue($segment, in_array($segment, $columnsEncrypt));
+                ? $this->wrapTable($segment)
+                : $this->wrapValue($segment, in_array($segment, $columnsEncrypt));
             // Colocar aqui encrypt
         })->implode('.');
     }
@@ -582,10 +584,10 @@ class GrammarEncrypt extends \Illuminate\Database\Query\Grammars\Grammar
         $parametize = [];
         foreach ($values as $key => $value) {
             $valueParameter = $this->parameter($value);
-            if($key && in_array($key, $columnsEncrypt))
+            if ($key && in_array($key, $columnsEncrypt))
                 $valueParameter = $this->wrapValueEncrypt($valueParameter);
 
-                $parametize[] = $valueParameter;
+            $parametize[] = $valueParameter;
         }
 
         return implode(', ', $parametize);
